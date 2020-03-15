@@ -1,10 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="static/jquery-3.4.1.min.js"></script>
-    <script src="static/jquery-ui.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
       $(document).ready(function() {
+        // Taken from https://stackoverflow.com/a/16091018
+        // This Function will always return the initial font-size of the html element
+        var rem = (function rem() {
+          var html = document.getElementsByTagName("html")[0];
+
+          return function() {
+            return parseInt(window.getComputedStyle(html)["fontSize"]);
+          };
+        })();
+
+        // This function will convert pixel to rem
+        function toRem(length) {
+          return parseInt(length) / rem();
+        }
+
+        var remSize = rem();
         var oriVal;
         $("#newItem").click(function() {
           $('<div class="item">New Item</div>')
@@ -29,10 +45,16 @@
             })
             .appendTo("#container");
         });
+        $("#increaseSize").click(function() {
+          $("#container").width($("#container").width() + remSize);
+          $("#container").height($("#container").height() + remSize);
+        });
+        $("#decreaseSize").click(function() {
+          $("#container").width($("#container").width() - remSize);
+          $("#container").height($("#container").height() - remSize);
+        });
       });
     </script>
-    <style src="static/jquery-ui.min.css"></style>
-    <style src="static/jquery-ui.theme.min.css"></style>
     <style>
       body {
         background-color: #f3f3f3;
@@ -47,14 +69,15 @@
         vertical-align: middle;
       }
       #container {
-        background: url("static/urgent-important-bg.png") #ffffff;
-        background-repeat: no-repeat;
-        background-size: 95%;
-        background-position: center;
+        background-color: #ffffff;
         border: 1px solid #d7d7d7;
         box-shadow: 5px 10px 18px rgba(0, 0, 0, 0.07);
-        flex-basis: 61rem;
-        height: 45rem;
+        height: 40rem;
+        width: 55rem;
+      }
+      .column {
+        display: flex;
+        flex-direction: column;
       }
       .item {
         background-color: rgb(3, 166, 240);
@@ -73,11 +96,18 @@
       input {
         cursor: pointer;
         display: inline-block;
+        margin-top: 1rem;
         opacity: 0.8;
         padding: 0.5rem 1rem;
         text-decoration: none;
+        z-index: 100;
       }
-
+      input:first-child {
+        margin-top: 0;
+      }
+      svg {
+        z-index: 1;
+      }
       input:hover {
         opacity: 1;
       }
@@ -95,8 +125,32 @@
   <body>
     <div id="header">Owl help you to prioritise</div>
     <div class="flexContainer">
-      <div class="flexItem" id="container"></div>
-      <input class="flexItem" type="button" value="New item" id="newItem" />
+      <div class="flexItem" id="container">
+        <svg height="100%" width="100%">
+          <line
+            x1="50%"
+            y1="0"
+            x2="50%"
+            y2="100%"
+            style="stroke: #000000;stroke-width:3px"
+          />
+          <line
+            x1="0"
+            y1="50%"
+            x2="100%"
+            y2="50%"
+            style="stroke: #000000;stroke-width:3px"
+          />
+        </svg>
+      </div>
+      <div class="flexItem column">
+        <input type="button" value="New item" id="newItem" />
+        <div>
+          <span>Change size:</span>
+          <input type="button" value="+" id="increaseSize" />
+          <input type="button" value="-" id="decreaseSize" />
+        </div>
+      </div>
     </div>
   </body>
 </html>
